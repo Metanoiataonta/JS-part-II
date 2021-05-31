@@ -1,0 +1,14 @@
+@import "init";
+
+.header {
+  padding: 40px 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cart-button {
+  border-radius: 5px;
+  border: 1px solid $borderColor;
+  padding: 5px 10px;
+  background-color: transparent;
+}

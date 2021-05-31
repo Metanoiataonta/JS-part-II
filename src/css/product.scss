@@ -1,0 +1,22 @@
+@import "init";
+
+.goods-list {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-gap: 20px;
+}
+
+.goods-item {
+  border: 1px solid $borderColor;
+  border-radius: 5px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  h3 {
+    font-size: 1.5em;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+}
