@@ -154,8 +154,9 @@ a {
 
 .goods-list {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-gap: 20px; }
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 20px;
+  margin-bottom: 40px; }
 
 .goods-item {
   border: 1px solid #000;
@@ -174,10 +175,28 @@ a {
   -webkit-justify-content: flex-end;
       -ms-flex-pack: end;
           justify-content: flex-end; }
+  .goods-item img {
+    width: 100%;
+    border-radius: 5px; }
   .goods-item h3 {
     font-size: 1.5em;
     font-weight: 600;
     margin-bottom: 10px; }
+  .goods-item p {
+    margin-bottom: 10px; }
+
+.goods-item__button {
+  border: 1px solid #000;
+  border-radius: 5px;
+  cursor: pointer; }
+
+.hamburger {
+  padding: 40px; }
+  .hamburger form {
+    display: grid;
+    grid-template: repeat(2, 1fr)/repeat(3, 1fr);
+    grid-auto-flow: column;
+    margin-bottom: 40px; }
 
 .container {
   margin-left: auto;
