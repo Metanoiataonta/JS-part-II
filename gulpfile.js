@@ -13,7 +13,7 @@ var gulp = require('gulp'),
     replace = require('gulp-replace');
 
 gulp.task('sass', function () {
-    return gulp.src('src/css/**/*.scss')
+    return gulp.src('src/css/*.scss')
         .pipe(sass())
         .pipe(autoprefixer(['last 15 versions', '> 1%', 'ie 8', 'ie 7'], {cascade: true}))
         .pipe(gulp.dest('dist/src/css'))

@@ -7,10 +7,18 @@
   -webkit-box-pack: end;
   -webkit-justify-content: flex-end;
       -ms-flex-pack: end;
-          justify-content: flex-end; }
+          justify-content: flex-end;
+  position: relative; }
 
 .cart-button {
   border-radius: 5px;
   border: 1px solid #000;
   padding: 5px 10px;
   background-color: transparent; }
+
+.goods-cart {
+  position: absolute;
+  top: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 20px; }

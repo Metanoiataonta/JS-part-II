@@ -1,13 +1,40 @@
+function makeGETRequest(url) {
+    return new Promise((callback) => {
+        let xhr;
+
+        if (window.XMLHttpRequest) {
+            xhr = new XMLHttpRequest();
+        } else if (window.ActiveXObject) {
+            xhr = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                const products = xhr.responseText;
+                callback(products);
+            }
+        }
+
+        xhr.open('GET', url, true);
+
+        xhr.send();
+    })
+
+}
+
+const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
+
 class GoodsItem {
-    constructor(title, price, img) {
-        this.title = title;
+    constructor(product_name, price, id_product) {
+        this.product_name = product_name;
         this.price = price;
-        this.img = img;
+        this.id_product = id_product;
     }
 
     render() {
-        return `<div class="goods-item"> <img src="${this.img}" alt=""><h3>${this.title}</h3><p>${this.price} Rupee</p><button class="goods-item__button" data-index =" ${list.goods.indexOf(this)}">Buy</button></div>`;
+        return `<div class="goods-item"> <h3>${this.product_name}</h3><p>${this.price} Rupee</p><button class="goods-item__button"  id="${this.id_product}">Buy</button></div>`;
     }
+
 }
 
 class GoodsList {
@@ -16,34 +43,63 @@ class GoodsList {
     }
 
     fetchGoods() {
-        this.goods = [
-            {title: 'Shirt', price: 150, img: 'src/img/img-1.jpg'},
-            {title: 'Socks', price: 50, img: 'src/img/img-2.jpg'},
-            {title: 'Jacket', price: 350, img: 'src/img/img-3.jpg'},
-            {title: 'Shoes', price: 250, img: 'src/img/img-4.jpg'},
-        ];
+        makeGETRequest(`${API_URL}/catalogData.json`)
+            .then((products) => {
+                this.goods = JSON.parse(products);
+                // console.log(this.goods, 'GETRequest');
+                this.render();
+                this.createButtonHandlers();
+            })
+
     }
 
     render() {
         let listHtml = '';
+
         this.goods.forEach(good => {
-            const goodItem = new GoodsItem(good.title, good.price, good.img);
+
+            const goodItem = new GoodsItem(good.product_name, good.price, good.id_product);
             listHtml += goodItem.render();
+
         });
         document.querySelector('.goods-list').innerHTML = listHtml;
+
     }
 
-    summary() {
-        return this.goods.reduce((acc, item) => {
-            acc += item.price;
-            return acc;
-        }, 0)
+    createButtonHandlers() {
+        // console.log(document.querySelectorAll('.goods-item__button'));
+        let buttonList = document.querySelectorAll('.goods-item__button');
+        buttonList.forEach((element) => {
+                element.addEventListener('click', function (event) {
+                    // console.log(this, event, event.target.id);
+                    const goodItem = list.goods.find((item) => item.id_product == event.target.id),
+                        cartItem = new CartItem(goodItem.product_name, goodItem.price, goodItem.id_product, 1);
+                    let inCart = {isIt: false, index: -1};
+                    cart.items.find((item, index) => {
+                        if (item.id_product == cartItem.id_product) {
+                            return inCart = {isIt: true, index: index};
+                        }
+
+                    });
+                    if (inCart.isIt) {
+                        cart.items[inCart.index].amount++;
+                    } else cart.items.push(cartItem);
+                    console.log(inCart);
+
+
+                    console.log(goodItem, cartItem);
+                    cart.render();
+                });
+            }
+        )
     }
+
+
 }
 
 class Cart {
-    constructor() {
-        this.goods = []
+    constructor(product_name, price, amount) {
+        this.items = [];
     }
 
     deleteItem() {
@@ -53,23 +109,45 @@ class Cart {
     addItem() {
 
     }
+
+    render() {
+        let list = '';
+        Object.keys(this.items[0]).forEach((item) => {
+            list += `<div>${item} </div> `
+        });
+        this.items.forEach((item) => {
+            console.log(item);
+            for (const [key, value] of Object.entries(item)) {
+                list += `<div>${value} </div> `;
+            }
+        });
+        list += `<div>Full price</div><div>${this.summary()}</div>`;
+        document.querySelector('.goods-cart').innerHTML = list;
+
+
+    }
+
+    summary() {
+        return this.items.reduce((acc, item) => {
+            acc += item.price * item.amount;
+            return acc;
+        }, 0)
+    }
 }
 
 class CartItem extends GoodsItem {
-    constructor(title, price, img, amount) {
-        super(title, price, img);
+    constructor(product_name, price, id_product, amount) {
+        super(product_name, price, id_product);
         this.amount = amount;
     }
 
-    buyItem() {
 
-    }
 }
 
 
-const list = new GoodsList();
+const list = new GoodsList,
+    cart = new Cart;
 list.fetchGoods();
-list.render();
 
 
 //
@@ -86,106 +164,3 @@ list.render();
 //
 // renderGoodsList();
 //
-
-// Данные
-//
-
-hamburger = {
-    // Виды гамбургеров
-//     Маленький
-//     Большой
-//
-
-
-    size: {
-        large: {price: 100, calories: 40},
-        small: {price: 50, calories: 20}
-    },
-    // Виды начинки
-//     С сыром
-//     С салатом
-//     С картофелем
-//
-
-    stuff: {
-        cheese: {price: 10, calories: 20},
-        salad: {price: 20, calories: 5},
-        potato: {price: 15, calories: 10}
-    },
-// Добавки
-//     Приправы
-//     Майонез
-//     Без ничего
-//
-//
-    additive: {
-        flavoring: {price: 15, calories: 0},
-        mayonnaise: {price: 20, calories: 5}
-    }
-}
-
-
-function createHamburgerForm() {
-    const hamburgerPlace = document.querySelector('.hamburger');
-    hamburgerPlace.innerHTML += ` <form action="return false">
-  <p>What kind of hamburger do you wish?</p>
-<div>
-    <input type="radio" name="size" id ="large" checked><label for="large">Large</label>
-    <input type="radio" name="size" id ="small"><label for="small">Small</label>
-</div>
-<p>With what filling?</p>
-<div>
-    <input type="radio" name="stuff" id ="cheese" checked><label for="cheese">Cheese</label>
-    <input type="radio" name="stuff" id ="salad"><label for="salad">Salad</label>
-    <input type="radio" name="stuff" id ="potato"><label for="potato">Potato</label>
-</div>
-
-<p>Do you want additive?</p>
-<div>
-    <input type="checkbox" name ="additive" id="flavoring" ><label for="flavoring">Flavoring</label>
-    <input type="checkbox" name ="additive" id="mayonnaise" ><label for="mayonnaise">Mayonnaise</label>
-</div>
-</form>
-<div class="result"> Change something</div>`
-}
-
-function calcult(item, list,) {
-    let sumCalories = 0,
-        sumPrice = 0;
-    list.forEach((block) => {
-        if (block.checked === true) {
-            sumPrice += hamburger[block.name][block.id].price;
-            sumCalories += hamburger[block.name][block.id].calories;
-            console.log(block, hamburger[block.name][block.id].price, hamburger[block.name][block.id].calories);
-
-        }
-
-    });
-    console.log(sumPrice, sumCalories);
-    document.querySelector('.result').innerHTML = ` <p>Result sum is: ${sumPrice} rupee.</p>
-    Result calories is: ${sumCalories} calroies.
-    `
-}
-
-function addListners() {
-    let inputList = document.querySelectorAll('.hamburger input');
-    inputList.forEach((item, index) => {
-        console.log(item);
-        item.addEventListener('change', () => calcult(item, inputList, index));
-    });
-    calcult(null, inputList);
-}
-
-
-createHamburgerForm();
-addListners();
-
-
-// for (let type of Object.keys(hamburger)){
-//     if (item.name === type){
-//
-//         if (item.id === 0){
-//
-//         }
-//     }
-// }

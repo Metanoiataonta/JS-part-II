@@ -4,6 +4,7 @@
   padding: 40px 0;
   display: flex;
   justify-content: flex-end;
+  position: relative;
 }
 
 .cart-button {
@@ -11,4 +12,12 @@
   border: 1px solid $borderColor;
   padding: 5px 10px;
   background-color: transparent;
+}
+
+.goods-cart {
+  position: absolute;
+  top: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 20px;
 }
