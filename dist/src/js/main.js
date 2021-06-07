@@ -67,11 +67,11 @@ class GoodsList {
     }
 
     createButtonHandlers() {
-        // console.log(document.querySelectorAll('.goods-item__button'));
+
         let buttonList = document.querySelectorAll('.goods-item__button');
         buttonList.forEach((element) => {
                 element.addEventListener('click', function (event) {
-                    // console.log(this, event, event.target.id);
+
                     const goodItem = list.goods.find((item) => item.id_product == event.target.id),
                         cartItem = new CartItem(goodItem.product_name, goodItem.price, goodItem.id_product, 1);
                     let inCart = {isIt: false, index: -1};
@@ -84,7 +84,6 @@ class GoodsList {
                     if (inCart.isIt) {
                         cart.items[inCart.index].amount++;
                     } else cart.items.push(cartItem);
-                    console.log(inCart);
 
 
                     console.log(goodItem, cartItem);
@@ -98,12 +97,14 @@ class GoodsList {
 }
 
 class Cart {
-    constructor(product_name, price, amount) {
+    constructor() {
         this.items = [];
     }
 
     deleteItem() {
-
+        console.log(this);
+        cart.items = cart.items.filter(item => !(item === this));
+        cart.render();
     }
 
     addItem() {
@@ -111,18 +112,38 @@ class Cart {
     }
 
     render() {
-        let list = '';
-        Object.keys(this.items[0]).forEach((item) => {
-            list += `<div>${item} </div> `
-        });
-        this.items.forEach((item) => {
-            console.log(item);
-            for (const [key, value] of Object.entries(item)) {
-                list += `<div>${value} </div> `;
-            }
-        });
-        list += `<div>Full price</div><div>${this.summary()}</div>`;
-        document.querySelector('.goods-cart').innerHTML = list;
+        let querySelector = document.querySelector('.goods-cart');
+        querySelector.innerHTML = '';
+        if (this.items.length > 0) {
+
+            Object.keys(this.items[0]).forEach((item) => {
+                const div = document.createElement('div');
+                div.classList.add('column');
+                div.innerHTML = item;
+                querySelector.appendChild(div);
+            });
+            this.items.forEach((item) => {
+
+
+                for (const [key, value] of Object.entries(item)) {
+                    let div = document.createElement('div');
+
+                    div.innerHTML = value;
+                    querySelector.appendChild(div);
+                }
+                let button = document.createElement('button');
+                button.classList.add('delete-button');
+                button.innerHTML = `delete`;
+                querySelector.appendChild(button);
+                button.addEventListener('click', this.deleteItem.bind(item));
+            });
+            let fullprice = document.createElement('div'),
+                summary = document.createElement('div');
+            fullprice.innerHTML = `fullprice`;
+            summary.innerHTML = `${this.summary()}`;
+            querySelector.appendChild(fullprice);
+            querySelector.appendChild(summary);
+        }
 
 
     }

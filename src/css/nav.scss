@@ -7,17 +7,29 @@
   position: relative;
 }
 
-.cart-button {
+.header button {
   border-radius: 5px;
   border: 1px solid $borderColor;
   padding: 5px 10px;
   background-color: transparent;
+  cursor: pointer;
 }
 
 .goods-cart {
   position: absolute;
   top: 100%;
+  right: 0;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   grid-gap: 20px;
+}
+
+//.column {
+//  font-weight: 700;
+//  font-size: 1.3em;
+//}
+
+.goods-cart .column:nth-last-of-type(4n-1) {
+  grid-column: 4/6;
+
 }
